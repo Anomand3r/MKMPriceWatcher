@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public interface MKMHtppService {
+public interface MKMHttpService {
     double getCurrentCardPrice(Card card, int pricePosition) throws IOException;
 
     Map<String, Integer> getPopularitiesForSets(List<CardSet> sets, CardRarity cardRarity);

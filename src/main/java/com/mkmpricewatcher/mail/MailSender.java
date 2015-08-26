@@ -9,47 +9,96 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 public class MailSender {
+    private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final String username = "cjcr.alxandru@gmail.com";
-    private static final String password = "";
-    private static final Logger logger = LogManager.getLogger(MailSender.class.getName());
-
-    private static Session session;
-
-    static {
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-        props.setProperty("mail.smtp.ssl.trust", "smtp.gmail.com");
-        session = Session.getInstance(props,
-                new javax.mail.Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password);
-                    }
-                });
-
+    public static MailBuilder compose() {
+        return new MailBuilder();
     }
 
-    public void sendMail(String subject, String text) {
-        if (text == null || text.isEmpty()) {
-            logger.info("Empty text. No mail will be sent.");
-            return;
-        }
-        try {
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("cjcr.alxandru@gmail.com"));
-            message.setRecipients(Message.RecipientType.TO,
-                    InternetAddress.parse("cjcr_alexandru@yahoo.com"));
-            message.setSubject(subject);
-            message.setContent(text, "text/html; charset=utf-8");
+    public static class MailBuilder {
+        private String username;
+        private String password;
+        private String server;
+        private String from;
+        private String to;
+        private String subject;
+        private String content;
 
-            Transport.send(message);
-            logger.info("Successfully sent email to cjcr_alexandru@yahoo.com.");
-        } catch (MessagingException e) {
-            logger.error("An error has occurred while sending email", e);
+        public MailBuilder authenticate(String username, String password) {
+            this.username = username;
+            this.password = password;
+            return this;
+        }
+
+        public MailBuilder server(String server) {
+            this.server = server;
+            return this;
+        }
+
+        public MailBuilder from(String from) {
+            this.from = from;
+            return this;
+        }
+
+        public MailBuilder to(String to) {
+            this.to = to;
+            return this;
+        }
+
+        public MailBuilder subject(String subject) {
+            this.subject = subject;
+            return this;
+        }
+
+        public MailBuilder content(String content) {
+            this.content = content;
+            return this;
+        }
+
+        public void send() throws MessagingException {
+            if (isValid()) {
+                Message message = new MimeMessage(getSession());
+                message.setFrom(new InternetAddress(from));
+                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+                message.setSubject(subject);
+                message.setContent(content, "text/html; charset=utf-8");
+                Transport.send(message);
+                LOGGER.info("Successfully sent email to " + to);
+            }
+        }
+
+        private boolean isValid() throws MessagingException {
+            if (username == null) {
+                throw new MessagingException("Missing username.");
+            }
+            if (password == null) {
+                throw new MessagingException("Missing password.");
+            }
+            if (server == null) {
+                throw new MessagingException("Missing server.");
+            }
+            if (to == null) {
+                throw new MessagingException("Missing receiver.");
+            }
+            if (content == null) {
+                throw new MessagingException("Missing content.");
+            }
+            return true;
+        }
+
+        private Session getSession() {
+            Properties props = new Properties();
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.host", server);
+            props.put("mail.smtp.port", "587");
+            props.setProperty("mail.smtp.ssl.trust", server);
+            return Session.getInstance(props,
+                    new Authenticator() {
+                        protected PasswordAuthentication getPasswordAuthentication() {
+                            return new PasswordAuthentication(username, password);
+                        }
+                    });
         }
     }
-
 }

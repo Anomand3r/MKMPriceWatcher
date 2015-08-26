@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MKMHtppServiceImpl implements MKMHtppService {
+public class MKMHttpServiceImpl implements MKMHttpService {
     public static final String MKM_URL = "https://www.magiccardmarket.eu";
     public static final String MKM_CARD_URL = "https://www.magiccardmarket" +
             ".eu/Products/Singles/%s/%s?productFilter%%5BidLanguage%%5D%%5B%%5D=1&productFilter%%5Bcondition%%5D%%5B" +
@@ -38,7 +38,7 @@ public class MKMHtppServiceImpl implements MKMHtppService {
     private static final String TABLE_DATA_SELECTOR = "td";
     private static final String LINK_SELECTOR = "a";
 
-    public MKMHtppServiceImpl() {
+    public MKMHttpServiceImpl() {
         installAllTrustingManager();
     }
 

@@ -6,8 +6,8 @@ import com.mkmpricewatcher.model.Card;
 import com.mkmpricewatcher.model.CardRarity;
 import com.mkmpricewatcher.persistence.CardDAO;
 import com.mkmpricewatcher.persistence.SqliteCardDAO;
-import com.mkmpricewatcher.web.MKMHtppService;
-import com.mkmpricewatcher.web.MKMHtppServiceImpl;
+import com.mkmpricewatcher.web.MKMHttpService;
+import com.mkmpricewatcher.web.MKMHttpServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,7 +19,7 @@ public class PriceWatcher {
     private static final int SELL_POSITION_LIMIT = 9;
     private static final Logger LOGGER = LogManager.getLogger();
     private CardDAO cardDAO = new SqliteCardDAO();
-    private MKMHtppService htppService = new MKMHtppServiceImpl();
+    private MKMHttpService htppService = new MKMHttpServiceImpl();
     private MailService mailService = new MKMMailService();
 
     public static void main(String[] args) {
@@ -66,9 +66,9 @@ public class PriceWatcher {
 //        ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM CARD_SET");
 //        while (resultSet.next()) {
 //            String set = resultSet.getString("NAME");
-//            Document document = Jsoup.connect(String.format(MKMHtppServiceImpl.MKM_SET_URL, set))
-//                    .userAgent(MKMHtppServiceImpl.USER_AGENT)
-//                    .referrer(MKMHtppServiceImpl.REFERRER)
+//            Document document = Jsoup.connect(String.format(MKMHttpServiceImpl.MKM_SET_URL, set))
+//                    .userAgent(MKMHttpServiceImpl.USER_AGENT)
+//                    .referrer(MKMHttpServiceImpl.REFERRER)
 //                    .get();
 //            Elements tableRows = document.select("table.MKMTable > tbody > tr");
 //            int popularity = tableRows.size() - 1;
@@ -77,7 +77,7 @@ public class PriceWatcher {
 //                Card card = new Card();
 //                Elements linkElement = tableData.get(2).select("a");
 //                card.setName(linkElement.text());
-//                card.setLink(MKMHtppServiceImpl.MKM_URL + linkElement.attr("href"));
+//                card.setLink(MKMHttpServiceImpl.MKM_URL + linkElement.attr("href"));
 //                card.setSet(set);
 //                card.setPopularity(popularity--);
 //                cards.add(card);
