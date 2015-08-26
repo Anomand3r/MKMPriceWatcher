@@ -1,9 +1,13 @@
 package com.mkmpricewatcher;
 
-import java.io.PrintWriter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.time.LocalDateTime;
 
 public class Card {
+    private static final Logger logger = LogManager.getLogger();
+
     private String name;
     private String set;
     private int popularity = -1;
@@ -15,29 +19,34 @@ public class Card {
     private LocalDateTime sellDate;
     private double sellThreshold = -1.0;
     private int quantity = -1;
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    private double oldPrice;
+    private String link;
 
     public String getName() {
         return name;
     }
 
-    public void setSet(String set) {
-        this.set = set;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getSet() {
         return set;
     }
 
-    public void setPopularity(int popularity) {
-        this.popularity = popularity;
+    public void setSet(String set) {
+        this.set = set;
     }
 
     public int getPopularity() {
         return popularity;
+    }
+
+    public void setPopularity(int popularity) {
+        if (this.popularity != -1 && this.popularity != popularity) {
+            logger.info("Changed popularity for " + name + " from " + this.popularity + " to " + popularity);
+        }
+        this.popularity = popularity;
     }
 
     public double getBuyPrice() {
@@ -119,5 +128,21 @@ public class Card {
                 ", sellThreshold=" + sellThreshold +
                 ", quantity=" + quantity +
                 '}';
+    }
+
+    public double getOldPrice() {
+        return oldPrice;
+    }
+
+    public void setOldPrice(double oldPrice) {
+        this.oldPrice = oldPrice;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 }
