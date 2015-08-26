@@ -1,4 +1,4 @@
-package com.mkmpricewatcher;
+package com.mkmpricewatcher.mail;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,7 +32,7 @@ public class MailSender {
 
     }
 
-    public static void sendMail(String subject, String text) {
+    public void sendMail(String subject, String text) {
         if (text == null || text.isEmpty()) {
             logger.info("Empty text. No mail will be sent.");
             return;

@@ -1,4 +1,4 @@
-package com.mkmpricewatcher;
+package com.mkmpricewatcher.model;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,7 +19,7 @@ public class Card {
     private LocalDateTime sellDate;
     private double sellThreshold = -1.0;
     private int quantity = -1;
-    private double oldPrice;
+    private double oldPrice = -1.0;
     private String link;
 
     public String getName() {
@@ -144,5 +144,9 @@ public class Card {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public boolean isPriceChanged() {
+        return oldPrice != -1.0;
     }
 }
