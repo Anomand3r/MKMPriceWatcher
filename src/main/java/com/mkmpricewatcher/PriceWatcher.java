@@ -97,7 +97,7 @@ public class PriceWatcher {
 
     private void updateCardPrices(List<Card> cards) {
         cards.stream().forEach(card -> {
-            LOGGER.info("Updating card " + card.getName() + "...");
+            LOGGER.info("Updating " + card.getName() + "...");
             try {
                 if (card.getBuyDate() == null) {
                     updateCardToBuy(card, htppService.getCurrentCardPrice(card, 0));
