@@ -19,7 +19,7 @@ public class PriceWatcher {
     private static final int SELL_POSITION_LIMIT = 9;
     private static final Logger LOGGER = LogManager.getLogger();
     private CardDAO cardDAO = new SqliteCardDAO();
-    private MKMHttpService htppService = new MKMHttpServiceImpl();
+    private MKMHttpService httpService = new MKMHttpServiceImpl();
     private MailService mailService = new MKMMailService();
 
     public static void main(String[] args) {
@@ -100,9 +100,9 @@ public class PriceWatcher {
             LOGGER.info("Updating " + card.getName() + "...");
             try {
                 if (card.getBuyDate() == null) {
-                    updateCardToBuy(card, htppService.getCurrentCardPrice(card, 0));
+                    updateCardToBuy(card, httpService.getCurrentCardPrice(card, 0));
                 } else if (card.getSellDate() == null) {
-                    updateCardToSell(card, htppService.getCurrentCardPrice(card, Math.min(card.getPopularity(),
+                    updateCardToSell(card, httpService.getCurrentCardPrice(card, Math.min(card.getPopularity(),
                             SELL_POSITION_LIMIT)));
                 } else {
                     LOGGER.info("Ignoring already sold card: " + card.getName());
@@ -114,7 +114,7 @@ public class PriceWatcher {
     }
 
     private void updateCardPopularities(List<Card> cards) {
-        htppService.getPopularitiesForSets(cardDAO.getAllSets(), CardRarity.MYTHIC).entrySet().stream().
+        httpService.getPopularitiesForSets(cardDAO.getAllSets(), CardRarity.MYTHIC).entrySet().stream().
                 forEach(entry -> cards.stream().
                         filter(card -> card.getLink().equals(entry.getKey())).
                         findFirst().
