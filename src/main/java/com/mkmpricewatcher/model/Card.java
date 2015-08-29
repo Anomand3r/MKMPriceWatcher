@@ -6,7 +6,9 @@ import org.apache.logging.log4j.Logger;
 import java.time.LocalDateTime;
 
 public class Card {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static final String PRICE_UPDATE_FORMAT = "Price updated for %s: %.2f -> %.2f.";
+    private static final String POPULARITY_UPDATE_FORMAT = "Popularity updated for %s: %d -> %d.";
 
     private String name;
     private String set;
@@ -44,7 +46,7 @@ public class Card {
 
     public void setPopularity(int popularity) {
         if (this.popularity != -1 && this.popularity != popularity) {
-            logger.info("Changed popularity for " + name + " from " + this.popularity + " to " + popularity);
+            LOGGER.info(String.format(POPULARITY_UPDATE_FORMAT, name, this.popularity, popularity));
         }
         this.popularity = popularity;
     }
@@ -78,6 +80,9 @@ public class Card {
     }
 
     public void setCurrentPrice(double currentPrice) {
+        if (this.currentPrice != currentPrice) {
+            LOGGER.info(String.format(PRICE_UPDATE_FORMAT, name, this.currentPrice, currentPrice));
+        }
         this.currentPrice = currentPrice;
     }
 
