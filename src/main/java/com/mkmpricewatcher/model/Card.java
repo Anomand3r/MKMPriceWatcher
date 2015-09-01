@@ -6,10 +6,11 @@ import org.apache.logging.log4j.Logger;
 import java.time.LocalDateTime;
 
 public class Card {
+
     private static final Logger LOGGER = LogManager.getLogger();
     private static final String PRICE_UPDATE_FORMAT = "Price updated for %s: %.2f -> %.2f.";
     private static final String POPULARITY_UPDATE_FORMAT = "Popularity updated for %s: %d -> %d.";
-
+    private static final int CARDS_IN_PLAYSET = 4;
     private String name;
     private String set;
     private int popularity = -1;
@@ -153,5 +154,17 @@ public class Card {
 
     public boolean isPriceChanged() {
         return oldPrice != -1.0;
+    }
+
+    public double getPlaysetPrice() {
+        return CARDS_IN_PLAYSET * getCurrentPrice();
+    }
+
+    public double getMinimumPlaysetPrice() {
+        return CARDS_IN_PLAYSET * getBuyThreshold();
+    }
+
+    public double getMaximumPlaysetPrice() {
+        return CARDS_IN_PLAYSET * getSellThreshold();
     }
 }

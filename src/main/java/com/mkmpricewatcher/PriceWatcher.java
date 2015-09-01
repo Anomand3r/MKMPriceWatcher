@@ -49,7 +49,7 @@ public class PriceWatcher {
     }
 
     private void sendEmailForUpdatedCards(List<Card> cards) {
-        mailService.sendEmail(cards.stream().filter(Card::isPriceChanged).collect(Collectors.toList()));
+        mailService.sendEmail(cards);
     }
 
 //    private static void importInitialCards() {
