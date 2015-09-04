@@ -84,6 +84,12 @@ public class Card {
         if (this.currentPrice != -1.0 && this.currentPrice != currentPrice) {
             LOGGER.info(String.format(PRICE_UPDATE_FORMAT, name, this.currentPrice, currentPrice));
             oldPrice = this.currentPrice;
+            if (currentPrice < buyThreshold) {
+                buyThreshold = currentPrice;
+            }
+            if (currentPrice > sellThreshold) {
+                sellThreshold = currentPrice;
+            }
         }
         this.currentPrice = currentPrice;
     }
