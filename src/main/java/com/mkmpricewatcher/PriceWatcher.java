@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PriceWatcher {
     private static final int SELL_POSITION_LIMIT = 9;
@@ -24,28 +23,6 @@ public class PriceWatcher {
 
     public static void main(String[] args) {
         new PriceWatcher().updateCardInformation();
-    }
-
-    private static boolean updateCardToBuy(Card card, double currentPrice) {
-        card.setCurrentPrice(currentPrice);
-        double buyThreshold = card.getBuyThreshold();
-        if (buyThreshold == -1 || buyThreshold > currentPrice) {
-            card.setOldPrice(buyThreshold);
-            card.setBuyThreshold(currentPrice);
-            return true;
-        }
-        return false;
-    }
-
-    private static boolean updateCardToSell(Card card, double currentPrice) {
-        card.setCurrentPrice(currentPrice);
-        double sellThreshold = card.getSellThreshold();
-        if (sellThreshold == -1 || sellThreshold < currentPrice) {
-            card.setOldPrice(sellThreshold);
-            card.setSellThreshold(currentPrice);
-            return true;
-        }
-        return false;
     }
 
     private void sendEmailForUpdatedCards(List<Card> cards) {
@@ -100,9 +77,9 @@ public class PriceWatcher {
             LOGGER.info("Updating " + card.getName() + "...");
             try {
                 if (card.getBuyDate() == null) {
-                    updateCardToBuy(card, httpService.getCurrentCardPrice(card, 0));
+                    card.setCurrentPrice(httpService.getCurrentCardPrice(card, 0));
                 } else if (card.getSellDate() == null) {
-                    updateCardToSell(card, httpService.getCurrentCardPrice(card, Math.min(card.getPopularity(),
+                    card.setCurrentPrice(httpService.getCurrentCardPrice(card, Math.min(card.getPopularity(),
                             SELL_POSITION_LIMIT)));
                 } else {
                     LOGGER.info("Ignoring already sold card: " + card.getName());

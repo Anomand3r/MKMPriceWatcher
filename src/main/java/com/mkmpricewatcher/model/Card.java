@@ -81,8 +81,9 @@ public class Card {
     }
 
     public void setCurrentPrice(double currentPrice) {
-        if (this.currentPrice != currentPrice) {
+        if (this.currentPrice != -1.0 && this.currentPrice != currentPrice) {
             LOGGER.info(String.format(PRICE_UPDATE_FORMAT, name, this.currentPrice, currentPrice));
+            oldPrice = this.currentPrice;
         }
         this.currentPrice = currentPrice;
     }

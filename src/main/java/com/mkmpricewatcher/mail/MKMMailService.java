@@ -12,12 +12,14 @@ import java.util.stream.Collectors;
 
 public class MKMMailService implements MailService {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final String TOTAL_PRICE_FORMAT = "Current playset price: %.2f<br>Minimum playset price: %" +
-            ".2f<br>Maximum playset price: %.2f<br>";
-    private static final String EMAIL_BUY_FORMAT = "<a href=%s>%s</a><br>Current price: %.2f<br>Old price: %" +
-            ".2f<br>Profit: <strong>%.2f%%</strong>";
-    private static final String EMAIL_SELL_FORMAT = "<a href=%s>%s</a><br>Current price: %.2f<br>Buy price: %" +
-            ".2f<br>Profit: <strong>%.2f%%</strong>";
+    private static final String TOTAL_PRICE_FORMAT = "Current playset price: <strong>%.2f</strong> (<font " +
+            "color=\"%s\">%.2f%%</font>)<br>Minimum playset price: %.2f <br>";
+    private static final String EMAIL_BUY_FORMAT = "<a href=%s>%s</a><br>Current price: <strong>%.2f</strong> (<font " +
+            "color=\"%s\">%.2f%%</font>)<br>Old price: %.2f<br>";
+    private static final String EMAIL_SELL_FORMAT = "<a href=%s>%s</a><br>Current price: <strong>%.2f</strong> (<font" +
+            " color=\"%s\">%.2f%%</font>)<br>Buy price: %.2f<br>";
+    private static final String BETTER_PRICE_COLOR = "green";
+    private static final String WORSE_PRICE_COLOR = "red";
 
     @Override
     public void sendEmail(List<Card> cards) {
@@ -40,9 +42,12 @@ public class MKMMailService implements MailService {
     }
 
     private String getTotalPrice(List<Card> cards) {
-        return String.format(TOTAL_PRICE_FORMAT, cards.stream().mapToDouble(Card::getPlaysetPrice).sum(),
-                cards.stream().mapToDouble(Card::getMinimumPlaysetPrice).sum(),
-                cards.stream().mapToDouble(Card::getMaximumPlaysetPrice).sum());
+        double currentPlaysetPrice = cards.stream().mapToDouble(Card::getPlaysetPrice).sum();
+        double minimumPlaysetPrice = cards.stream().mapToDouble(Card::getMinimumPlaysetPrice).sum();
+        double percentDifference = (currentPlaysetPrice - minimumPlaysetPrice) / minimumPlaysetPrice * 100;
+        return String.format(TOTAL_PRICE_FORMAT, currentPlaysetPrice,
+                percentDifference < 0 ? BETTER_PRICE_COLOR : WORSE_PRICE_COLOR,
+                percentDifference, minimumPlaysetPrice);
     }
 
     private String getPriceUpdates(List<Card> cards) {
@@ -50,18 +55,22 @@ public class MKMMailService implements MailService {
                 filter(Card::isPriceChanged).
                 map(card -> {
                     double currentPrice = card.getCurrentPrice();
-                    double oldPrice = card.getOldPrice();
                     double buyPrice = card.getBuyPrice();
+                    double buyThreshold = card.getBuyThreshold();
                     if (card.getBuyDate() == null) {
+                        double percentDifference = (currentPrice - buyThreshold) / buyThreshold * 100;
                         return String.format(EMAIL_BUY_FORMAT, card.getLink(), card.getName(),
                                 currentPrice,
-                                oldPrice,
-                                (oldPrice - currentPrice) / oldPrice * 100);
+                                percentDifference < 0 ? BETTER_PRICE_COLOR : WORSE_PRICE_COLOR,
+                                percentDifference,
+                                card.getOldPrice());
                     } else {
+                        double percentDifference = (currentPrice - buyPrice) / buyPrice * 100;
                         return String.format(EMAIL_SELL_FORMAT, card.getLink(), card.getName(),
                                 currentPrice,
-                                buyPrice,
-                                (currentPrice - buyPrice) / buyPrice * 100);
+                                percentDifference > 0 ? BETTER_PRICE_COLOR : WORSE_PRICE_COLOR,
+                                percentDifference,
+                                buyPrice);
                     }
                 }).
                 collect(Collectors.joining("<br><br>"));
