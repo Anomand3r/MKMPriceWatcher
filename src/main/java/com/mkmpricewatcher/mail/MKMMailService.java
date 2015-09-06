@@ -26,7 +26,7 @@ public class MKMMailService implements MailService {
         if (!cards.isEmpty()) {
             try {
                 MailSender.compose().
-                        authenticate("cjcr.alxandru@gmail.com", "zmhaxrobrsaqnegi").
+                        authenticate("cjcr.alxandru@gmail.com", "").
                         server("smtp.gmail.com").
                         from("cjcr.alxandru@gmail.com").
                         to("cjcr_alexandru@yahoo.com").
@@ -46,7 +46,7 @@ public class MKMMailService implements MailService {
         double minimumPlaysetPrice = cards.stream().mapToDouble(Card::getMinimumPlaysetPrice).sum();
         double percentDifference = (currentPlaysetPrice - minimumPlaysetPrice) / minimumPlaysetPrice * 100;
         return String.format(TOTAL_PRICE_FORMAT, currentPlaysetPrice,
-                percentDifference < 0 ? BETTER_PRICE_COLOR : WORSE_PRICE_COLOR,
+                percentDifference <= 0 ? BETTER_PRICE_COLOR : WORSE_PRICE_COLOR,
                 percentDifference, minimumPlaysetPrice);
     }
 
@@ -61,14 +61,14 @@ public class MKMMailService implements MailService {
                         double percentDifference = (currentPrice - buyThreshold) / buyThreshold * 100;
                         return String.format(EMAIL_BUY_FORMAT, card.getLink(), card.getName(),
                                 currentPrice,
-                                percentDifference < 0 ? BETTER_PRICE_COLOR : WORSE_PRICE_COLOR,
+                                percentDifference <= 0 ? BETTER_PRICE_COLOR : WORSE_PRICE_COLOR,
                                 percentDifference,
                                 card.getOldPrice());
                     } else {
                         double percentDifference = (currentPrice - buyPrice) / buyPrice * 100;
                         return String.format(EMAIL_SELL_FORMAT, card.getLink(), card.getName(),
                                 currentPrice,
-                                percentDifference > 0 ? BETTER_PRICE_COLOR : WORSE_PRICE_COLOR,
+                                percentDifference >= 0 ? BETTER_PRICE_COLOR : WORSE_PRICE_COLOR,
                                 percentDifference,
                                 buyPrice);
                     }
